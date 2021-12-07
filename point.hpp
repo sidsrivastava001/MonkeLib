@@ -1,48 +1,82 @@
 
 #include <iostream>
 
+#ifndef WAYPOINdouble_H
+#define WAYPOINdouble_H
+
+#include <algorithm>
+#include <math.h>
+
 // Everything is in the PP namespace
 
 namespace PP {
 
-	template <class T>
+	struct Waypoint {
 
-	struct WayPoint {
-
-		T x;
-		T y;
+		double x;
+		double y;
 		double speed; // measured in inches per second
 
-		friend WayPoint<T> operator+ (const WayPoint<T>& lhs, const WayPoint<T>& rhs) {
+		Waypoint (const double& _x, const double& _y, const double& _speed = 0.0) : x(_x), y(_y), speed(_speed){
+		}
+
+		Waypoint () : Waypoint(0,0,0){}
+
+		friend Waypoint operator+ (const Waypoint& lhs, const Waypoint& rhs) {
 			return {lhs.x + rhs.x, lhs.y + rhs.y, lhs.speed};
 		}
 
-		friend WayPoint<T> operator- (const WayPoint<T>& lhs, const WayPoint<T>& rhs) {
+		friend Waypoint operator- (const Waypoint& lhs, const Waypoint& rhs) {
 			return { lhs.x - rhs.x, lhs.y - rhs.y, lhs.speed };
 		}
 
-		friend WayPoint<T> operator* (const WayPoint<T>& WayPoint, const T& factor) {
-			return { WayPoint.x * factor, WayPoint.y * factor, lhs.speed };
+		friend Waypoint operator* (const Waypoint& point, const double& factor) {
+			return { point.x * factor, point.y * factor, point.speed };
 		}
 
-		friend WayPoint<T> operator* (const T& factor, const WayPoint<T>& WayPoint) {
-			return WayPoint * factor;
+		friend Waypoint operator* (const double& factor, const Waypoint& point) {
+			return point * factor;
 		}
 
-		friend std::ostream& operator<< (std::ostream& os, const WayPoint<T>& WayPoint) {
-			os << "X: " << WayPoint.x << " Y: " << WayPoint.y  << " Speed: " << std::endl;
+		friend std::ostream& operator<< (std::ostream& os, const Waypoint& point) {
+			os << "X: " << point.x << " Y: " << point.y  << " Speed: " << point.speed << std::endl;
 			return os;
 		}
 
-		friend std::istream& operator>> (std::istream& is, WayPoint<T>& WayPoint) {
-			is >> WayPoint.x >> WayPoint.y >> WayPoint.speed;
+		friend std::istream& operator>> (std::istream& is, Waypoint& point) {
+			is >> point.x >> point.y >> point.speed;
 			return is;
 		}
 
-		T dotProduct(const WayPoint<T>& other) const {
+		double magnitude(){
+			return sqrt(x * x + y * y);
+		}
+
+		double distanceFormula(const Waypoint other){
+			return (*this - other).magnitude();
+		}
+
+		Waypoint normalize() {
+			double mag = magnitude();
+  			return  { x / mag, y / mag, speed};
+		}
+
+		Waypoint interpolate(const Waypoint& other, const double& factor){
+			// So this math is a bit harder
+			// Subtract the other point from this
+			// Multiply by factor to get the portion
+			// Add this
+
+			return *this + ( factor * (other - *this) );
+
+		}
+
+		double dotProduct(const Waypoint& other) const {
 			return x * other.x + y * other.y;
 		}
 
 	};
 
 }
+
+#endif
