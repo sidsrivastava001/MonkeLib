@@ -1,8 +1,8 @@
 
 #include <iostream>
 
-#ifndef WAYPOINdouble_H
-#define WAYPOINdouble_H
+#ifndef WAYPOINT_H
+#define WAYPOINT_H
 
 #include <algorithm>
 #include <math.h>
